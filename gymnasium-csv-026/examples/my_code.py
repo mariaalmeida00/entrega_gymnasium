@@ -21,16 +21,34 @@ v
 X (rows)
 
 """
+UP = 0
+UP_RIGHT = 1
+RIGHT = 2
+DOWN_RIGHT = 3
+DOWN = 4
+DOWN_LEFT = 5
+LEFT = 6
+UP_LEFT = 7
+
+def translateKey(k):
+      k = str(k)
+      keyDict = {
+            "8": UP,
+            "9": UP_RIGHT,
+            "6": RIGHT,
+            "3": DOWN_RIGHT,
+            "2": DOWN,
+            "1": DOWN_LEFT,
+            "4": LEFT,
+            "7": UP_RIGHT
+      }
+      if k in keyDict.keys():
+            return keyDict[k]
+      else:
+            return 2 
 
 def translateInstruction(instruction):
-      UP = 0
-      UP_RIGHT = 1
-      RIGHT = 2
-      DOWN_RIGHT = 3
-      DOWN = 4
-      DOWN_LEFT = 5
-      LEFT = 6
-      UP_LEFT = 7
+      
       if instruction == "up":
             return 0
       elif instruction == "down":
@@ -45,6 +63,7 @@ parser.add_argument("--start_x", type=int, default=1)
 parser.add_argument("--start_y", type=int, default=1)
 parser.add_argument("--end_x", type=int, default=7)
 parser.add_argument("--end_y", type=int, default=7)
+parser.add_argument("--custom_map", type=str, default='../assets/map1.csv')
 args = parser.parse_args()
 
 START_X = args.start_x
@@ -57,32 +76,67 @@ SIM_PERIOD_MS = 500.0
 
 env = gym.make('gymnasium_csv-v0',
                render_mode='human',  # "human", "text", None
-               inFileStr='../assets/map1.csv',
+               inFileStr=args.custom_map,
                initX=START_X,
                initY=START_Y,
                goalX=END_X,
                goalY=END_Y)
 
-instructions, objectives_coords = trajectory_alg.executeAlgorithm(START_X, START_Y, END_X, END_Y)
-print("START: " + str((START_X, START_Y)) + " --------> GOAL: " + str((END_X, END_Y)))
-input()
-print ("Instructions to follow: ", instructions)
-input()
+answer = input("Do you want to play? (0=No, 1=Yes): ")
+if answer == 0:
+      instructions, objectives_coords = trajectory_alg.executeAlgorithm(START_X, START_Y, END_X, END_Y)
+      print("START: " + str((START_X, START_Y)) + " --------> GOAL: " + str((END_X, END_Y)))
+      input("Press a key to continue....")
+      print ("Instructions to follow: ", instructions)
 
-observation, info = env.reset()
+      observation, info = env.reset()
 
-print("observation: "+str(observation)+", info: "+str(info))
-env.render()
-time.sleep(0.5)
-
-terminated = False
-instr_completed = 0
-while not terminated:
-      STEP_DIRECTION = translateInstruction(instructions[instr_completed])
-      observation, reward, terminated, truncated, info = env.step(STEP_DIRECTION)
+      print("observation: "+str(observation)+", info: "+str(info))
       env.render()
-      print("observation: " + str(observation)+", reward: " + str(reward) + ", terminated: " + str(terminated) + ", truncated: " + str(truncated) + ", info: " + str(info))
+      time.sleep(0.5)
+
+      terminated = False
+      instr_completed = 0
+      while not terminated:
+            STEP_DIRECTION = translateInstruction(instructions[instr_completed])
+            observation, reward, terminated, truncated, info = env.step(STEP_DIRECTION)
+            env.render()
+            print("observation: " + str(observation)+", reward: " + str(reward) + ", terminated: " + str(terminated) + ", truncated: " + str(truncated) + ", info: " + str(info))
+            if all(np.array(objectives_coords[instr_completed]) == observation):
+                  instr_completed += 1
+            time.sleep(SIM_PERIOD_MS/1000.0)
       if all(np.array(objectives_coords[instr_completed]) == observation):
-            instr_completed += 1
-      time.sleep(SIM_PERIOD_MS/1000.0)
-print ("\nGOAAAAAAAAAAAAAL!!!")
+            print ("\nGOAAAAAAAAAAAAAL!!!")
+      else:
+            print ("\nOh, no...")
+
+else:
+      print("\n\t    CONTROLS   ")
+      print("\t  7    8    9  ")
+      print("\t   ^   ^   ^   ")
+      print("\t    \  |  /    ")
+      print("\t     \ | /     ")
+      print("\t4 <--- o ---> 6")
+      print("\t     / | \     ")
+      print("\t    /  |  \    ")
+      print("\t   v   V   v   ")
+      print("\t  1    2    3  \n")
+
+      observation, info = env.reset()
+
+      print("observation: "+str(observation)+", info: "+str(info))
+      env.render()
+      print("You have to use the controls above to move your robot to the objective.")
+      input("Ready? Press a key to continue...")
+      terminated = False
+      instr_completed = 0
+      while not terminated:
+            k = input()
+            STEP_DIRECTION = translateKey(k)
+            observation, reward, terminated, truncated, info = env.step(STEP_DIRECTION)
+            env.render()
+      
+      if all(np.array([END_X, END_Y]) == observation):
+            print ("\nGOAAAAAAAAAAAAAL!!!")
+      else:
+            print ("\nOh, no... GAME OVER")
