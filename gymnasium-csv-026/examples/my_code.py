@@ -6,6 +6,7 @@ import gymnasium_csv
 import numpy as np
 import time
 import sys
+import argparse
 
 import trajectory_alg
 
@@ -21,28 +22,18 @@ X (rows)
 
 """
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--start_x", type=int, default=1)
+parser.add_argument("--start_y", type=int, default=1)
+parser.add_argument("--end_x", type=int, default=7)
+parser.add_argument("--end_y", type=int, default=7)
+args = parser.parse_args()
 
-START_X = 1
-START_Y = 1
-END_X = 7
-END_Y = 7
+START_X = args.start_x
+START_Y = args.start_y
+END_X = args.end_x
+END_Y = args.end_y
 
-print(f"Arguments count: {len(sys.argv)}")
-for i, arg in enumerate(sys.argv):
-      print(f"Argument {i:>6}: {arg}")
-      arg = arg.lower()
-      if "start_x=" in arg:
-            arg = arg.replace("start_x=", "")
-            START_X = int(arg)
-      elif "start_y=" in arg:
-            arg = arg.replace("start_y=", "")
-            START_Y = int(arg)
-      elif "end_x=" in arg:
-            arg = arg.replace("end_x=", "")
-            END_X = int(arg)
-      elif "end_y=" in arg:
-            arg = arg.replace("end_y=", "")
-            END_Y = int(arg)
 
 UP = 0
 UP_RIGHT = 1
@@ -64,11 +55,13 @@ env = gym.make('gymnasium_csv-v0',
                goalX=END_X,
                goalY=END_Y)
 
-observation, info = env.reset()
-
 instructions, objectives_coords = trajectory_alg.executeAlgorithm(START_X, START_Y, END_X, END_Y)
+print("START: " + str((START_X, START_Y)) + " --------> GOAL: " + str((END_X, END_Y)))
+input()
+print ("Instructions to follow: ", instructions)
+input()
 
-print (instructions, objectives_coords)
+observation, info = env.reset()
 
 print("observation: "+str(observation)+", info: "+str(info))
 env.render()

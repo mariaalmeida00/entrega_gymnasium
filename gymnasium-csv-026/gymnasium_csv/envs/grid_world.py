@@ -14,10 +14,11 @@ v
 X (rows: self.inFile.shape[0]; provides the height in pygame)
 """
 
-MAX_WINDOW_WIDTH, MAX_WINDOW_HEIGHT = 1920, 1080
-COLOR_BACKGROUND = (0, 0, 0)
-COLOR_WALL = (255, 255, 255)
-COLOR_ROBOT = (255, 0, 0)
+MAX_WINDOW_WIDTH, MAX_WINDOW_HEIGHT = 1366, 768 #1920, 1080
+COLOR_BACKGROUND = (64, 33, 130)
+COLOR_WALL = (61, 190, 169)
+COLOR_ROBOT = (225, 179, 255)
+COLOR_GOAL = (255, 250, 222)
 
 
 class GridWorldEnv(gym.Env):
@@ -161,7 +162,7 @@ class GridWorldEnv(gym.Env):
                 self.WINDOW_WIDTH = MAX_WINDOW_WIDTH  # same
                 self.WINDOW_HEIGHT = MAX_WINDOW_WIDTH / inFileAspectRatio
             elif inFileAspectRatio < maxWindowAspectRatio:
-                print("inFileAspectRatio > maxWindowAspectRatio (portrait)")
+                print("inFileAspectRatio < maxWindowAspectRatio (portrait)")
                 self.WINDOW_HEIGHT = MAX_WINDOW_HEIGHT  # same
                 self.WINDOW_WIDTH = MAX_WINDOW_HEIGHT * inFileAspectRatio
             pygame.init()
@@ -188,7 +189,7 @@ class GridWorldEnv(gym.Env):
                                      COLOR_WALL,
                                      pygame.Rect(self.cellWidth*iY, self.cellHeight*iX, self.cellWidth, self.cellHeight))
                 if self.inFile[iX][iY] == 3:
-                    pygame.draw.rect(canvas, (0, 255, 0),
+                    pygame.draw.rect(canvas, COLOR_GOAL,
                                      pygame.Rect(self.cellWidth*iY, self.cellHeight*iX, self.cellWidth, self.cellHeight))
                 robot = pygame.draw.rect(canvas, COLOR_ROBOT,
                                          pygame.Rect(self.cellWidth*self._agent_location[1]+self.cellWidth/4.0, self.cellHeight*self._agent_location[0]+self.cellHeight/4.0, self.cellWidth/2.0, self.cellHeight/2.0))

@@ -206,14 +206,13 @@ def executeAlgorithm(init_x, init_y, obj_x, obj_y):
     objectives_coords = []
 
     for i in range(1, len(instructions_aux)):
-        print('\n',instructions_aux[i-1],'--->', instructions_aux[i], end=':')
+        #print('\n',instructions_aux[i-1],'--->', instructions_aux[i], end=':')
         if instructions_aux[i] != instructions_aux[i-1]:
             instructions.append(instructions_aux[i])
             objectives_coords.append(objectives_coords_aux[i])
-            print('ADD!!')
+            #print('ADD!!')
 
     objectives_coords.append([END_X,END_Y])
-    print('\n')
     #print(instructions_aux)
     #print(objectives_coords_aux)
     #print(instructions)
