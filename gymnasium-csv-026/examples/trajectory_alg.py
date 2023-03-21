@@ -61,7 +61,8 @@ class Node:
                          " | id "+str(self.myId)+\
                          " | parentId "+str(self.parentId))
 
-def executeAlgorithm(init_x, init_y, obj_x, obj_y):
+def executeAlgorithm(map_file, init_x, init_y, obj_x, obj_y):
+    global FILE_NAME
     global charMap
     global START_X
     global START_Y
@@ -71,6 +72,7 @@ def executeAlgorithm(init_x, init_y, obj_x, obj_y):
     START_Y = init_y
     END_X = obj_x
     END_Y = obj_y
+    FILE_NAME = map_file
     print(' ~~~~~~~~~~~~~~~~~~~~ TRAJECTORY PLANIFICATION ~~~~~~~~~~~~~~~~~~~~ ')
     ## `nodes` contendrá los nodos del grafo
     nodes = []

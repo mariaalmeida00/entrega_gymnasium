@@ -31,6 +31,8 @@ LEFT = 6
 UP_LEFT = 7
 
 def translateKey(k):
+      # This is used because usually PCs hace a numeric keyboard with some arrows drawn on it,
+      # so we are going to take advantage of these arrows.
       k = str(k)
       keyDict = {
             "8": UP,
@@ -48,7 +50,8 @@ def translateKey(k):
             return 2 
 
 def translateInstruction(instruction):
-      
+      # This is necessary to use trajectory_alg, due to the fact that it returns an array of strings (instructions)
+      # so we translate it to the new asked format.
       if instruction == "up":
             return 0
       elif instruction == "down":
@@ -63,7 +66,8 @@ parser.add_argument("--start_x", type=int, default=1)
 parser.add_argument("--start_y", type=int, default=1)
 parser.add_argument("--end_x", type=int, default=7)
 parser.add_argument("--end_y", type=int, default=7)
-parser.add_argument("--custom_map", type=str, default='../assets/map1.csv')
+parser.add_argument("--custom_map", type=str, default='map1.csv')
+parser.add_argument("--sim_speed", type=float, default=1)
 args = parser.parse_args()
 
 START_X = args.start_x
@@ -71,23 +75,28 @@ START_Y = args.start_y
 END_X = args.end_x
 END_Y = args.end_y
 
-SIM_PERIOD_MS = 500.0
+SIM_PERIOD_MS = int(500.0 / args.sim_speed) # Here we limit the simmulation period values
+if SIM_PERIOD_MS < 20:
+      SIM_PERIOD_MS = 20
+elif SIM_PERIOD_MS > 2000:
+      SIM_PERIOD_MS = 2000
 
 
 env = gym.make('gymnasium_csv-v0',
                render_mode='human',  # "human", "text", None
-               inFileStr=args.custom_map,
+               inFileStr='../assets/' + args.custom_map,
                initX=START_X,
                initY=START_Y,
                goalX=END_X,
                goalY=END_Y)
 
 answer = input("Do you want to play? (0=No, 1=Yes): ")
-if answer == 0:
-      instructions, objectives_coords = trajectory_alg.executeAlgorithm(START_X, START_Y, END_X, END_Y)
+if answer == "0":
+      instructions, objectives_coords = trajectory_alg.executeAlgorithm('../assets/' + args.custom_map, START_X, START_Y, END_X, END_Y)
       print("START: " + str((START_X, START_Y)) + " --------> GOAL: " + str((END_X, END_Y)))
       input("Press a key to continue....")
       print ("Instructions to follow: ", instructions)
+      print ("Objective targets:", objectives_coords)
 
       observation, info = env.reset()
 
@@ -102,8 +111,9 @@ if answer == 0:
             observation, reward, terminated, truncated, info = env.step(STEP_DIRECTION)
             env.render()
             print("observation: " + str(observation)+", reward: " + str(reward) + ", terminated: " + str(terminated) + ", truncated: " + str(truncated) + ", info: " + str(info))
-            if all(np.array(objectives_coords[instr_completed]) == observation):
-                  instr_completed += 1
+            if not terminated:
+                  if all(np.array(objectives_coords[instr_completed]) == observation):
+                        instr_completed += 1
             time.sleep(SIM_PERIOD_MS/1000.0)
       if all(np.array(objectives_coords[instr_completed]) == observation):
             print ("\nGOAAAAAAAAAAAAAL!!!")

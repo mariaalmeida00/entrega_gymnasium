@@ -2,6 +2,12 @@ import gymnasium as gym
 import numpy as np
 import pygame
 from gymnasium import spaces
+try:
+    import subprocess
+    IMPORT_SUCCESS = True
+except:
+    IMPORT_SUCCESS = False
+
 
 """
 # Coordinate Systems for `.csv` and `print(numpy)`
@@ -13,8 +19,15 @@ X points down (rows); Y points right (columns); Z would point outwards.
 v
 X (rows: self.inFile.shape[0]; provides the height in pygame)
 """
+if IMPORT_SUCCESS:
+    output = subprocess.Popen('xrandr | grep "\*" | cut -d" " -f4',shell=True, stdout=subprocess.PIPE).communicate()[0]
+    resolution = output.split()[0].split(b'x')
+    resol_w = int(resolution[0])
+    resol_h = int(resolution[1])
+    MAX_WINDOW_WIDTH, MAX_WINDOW_HEIGHT = resol_w - 70, resol_h - 70
+else:
+    MAX_WINDOW_WIDTH, MAX_WINDOW_HEIGHT = 1920, 1080
 
-MAX_WINDOW_WIDTH, MAX_WINDOW_HEIGHT = 1366, 768 #1920, 1080
 COLOR_BACKGROUND = (64, 33, 130)
 COLOR_WALL = (61, 190, 169)
 COLOR_ROBOT = (225, 179, 255)
