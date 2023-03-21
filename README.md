@@ -10,7 +10,7 @@ Repositorio: https://github.com/mariaalmeida00/entrega_gymnasium.git
 ```
 python3 my_code.py
 ```
-![MAPA 1 (básico): map1.csv](/assets/pictures/map1.png)
+- El mapa básico (map1.csv) puede encontrarse en /assets en formato csv y en /assets/pictures en png.
 
 ## Extras:
 - Se ha modificado el archivo con path ***gymnasium_csv/envs/grid_world.py*** para que la ventana de visualización se adaptara adecuadamente a las dimensiones de la pantalla de cualquier PC utilizado, como se muestra a continuación. Para ello se ha utilizado la librería *subprocess*. Por si hubiera algún problema al importarla o no existiera, se ha creado una excepción. Las dimensiones permanecerán como se escribieron por defecto en caso de no conseguir obtener las dimensiones de la pantalla:
@@ -40,9 +40,7 @@ COLOR_WALL = (61, 190, 169)
 COLOR_ROBOT = (225, 179, 255)
 COLOR_GOAL = (255, 250, 222)
 ```
-- Se han creado 2 nuevos mapas (map2 y map3, siendo este último el de mayor complejidad):
-![MAPA 2: map2.csv](/assets/pictures/map2.png)
-![MAPA 3: map2.csv](/assets/pictures/map3.png)
+- Se han creado 2 nuevos mapas (map2 y map3, siendo este último el de mayor complejidad) que pueden encontrarse en /assets en formato csv y en /assets/pictures en png.
 - Se tienen los siguentes argumentos que es posible introducir por terminal al lanzar el archivo **my_code.py** (se escribe el argumento con su valor por defecto a la derecha). De esta forma, es posible elegir por terminal un punto de inicio o final distintos a los predefinidos:
     - [--start_x START_X]
     - [--start_y START_Y]
