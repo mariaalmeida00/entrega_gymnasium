@@ -22,6 +22,24 @@ X (rows)
 
 """
 
+def translateInstruction(instruction):
+      UP = 0
+      UP_RIGHT = 1
+      RIGHT = 2
+      DOWN_RIGHT = 3
+      DOWN = 4
+      DOWN_LEFT = 5
+      LEFT = 6
+      UP_LEFT = 7
+      if instruction == "up":
+            return 0
+      elif instruction == "down":
+            return 4
+      elif instruction == "right":
+            return 2
+      elif instruction == "left":
+            return 6
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--start_x", type=int, default=1)
 parser.add_argument("--start_y", type=int, default=1)
@@ -33,16 +51,6 @@ START_X = args.start_x
 START_Y = args.start_y
 END_X = args.end_x
 END_Y = args.end_y
-
-
-UP = 0
-UP_RIGHT = 1
-RIGHT = 2
-DOWN_RIGHT = 3
-DOWN = 4
-DOWN_LEFT = 5
-LEFT = 6
-UP_LEFT = 7
 
 SIM_PERIOD_MS = 500.0
 
@@ -67,9 +75,14 @@ print("observation: "+str(observation)+", info: "+str(info))
 env.render()
 time.sleep(0.5)
 
-for i in range(5):
-    observation, reward, terminated, truncated, info = env.step(DOWN_RIGHT)
-    env.render()
-    print("observation: " + str(observation)+", reward: " + str(reward) + ", terminated: " +
-          str(terminated) + ", truncated: " + str(truncated) + ", info: " + str(info))
-    time.sleep(SIM_PERIOD_MS/1000.0)
+terminated = False
+instr_completed = 0
+while not terminated:
+      STEP_DIRECTION = translateInstruction(instructions[instr_completed])
+      observation, reward, terminated, truncated, info = env.step(STEP_DIRECTION)
+      env.render()
+      print("observation: " + str(observation)+", reward: " + str(reward) + ", terminated: " + str(terminated) + ", truncated: " + str(truncated) + ", info: " + str(info))
+      if all(np.array(objectives_coords[instr_completed]) == observation):
+            instr_completed += 1
+      time.sleep(SIM_PERIOD_MS/1000.0)
+print ("\nGOAAAAAAAAAAAAAL!!!")
